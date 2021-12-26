@@ -23,6 +23,7 @@ namespace RabbitMQ.Consumer
                 //true olursa kaç tane consumer varsa tek bir sefer de 5 olacak şekilde ayarlar. 3 ona 2 ona diye gidebilir. yani toplam sayıyı belirtir. false yaparsam
                 // consumer için kaçar tane gideceğini belirtir.
                 //channel.BasicQos(0, 1, false);
+                //!!!!!!!!!Bu kısmı sor tam olarak anlayamadım. Çalıştırdığımda cunsomerlara tek tek gönderim yapıyor ama ben 2 tane istedim.!!!!!
                 channel.BasicQos(0, 2, true);
 
                 //mesajlar boşa gitmemesi için bir kuyruk oluşturulması gerekiyor. 4
