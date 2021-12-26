@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace RabbitMQ.Publisher
+namespace RabbitMQ.Consumer
 {
     internal class Program
     {
@@ -23,14 +23,9 @@ namespace RabbitMQ.Publisher
                 //autoDelete eğer consumer kapatırsa yanlışlıkla giderse queue kalsın istediğim için false veriyorum. kuyruk düşmesin istiyorum.
                 channel.QueueDeclare("hello-queue", true, false, false);
 
-                string message = "hello world";
-
-                var messageBody = Encoding.UTF8.GetBytes(message);
 
 
-                channel.BasicPublish(string.Empty, "hello-queue", null, messageBody);
 
-                Console.WriteLine("Mesaj Gönderilmiştir.");
                 Console.ReadLine();
 
 
