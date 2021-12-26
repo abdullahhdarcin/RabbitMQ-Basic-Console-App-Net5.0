@@ -1,0 +1,3 @@
+﻿Funout Exchange
+  cunsomerlar kendi kuyruğunu kendisi oluşturur. Bu sayede fanout exchange te sen bir kuyruk oluşturmazsın. 
+  Cunsomer eğer giderse kuyrukta silinir, kuyruktaki mesajlarda silinir. 
