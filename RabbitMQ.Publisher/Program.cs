@@ -1,5 +1,6 @@
 ﻿using RabbitMQ.Client;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace RabbitMQ.Publisher
@@ -23,14 +24,22 @@ namespace RabbitMQ.Publisher
                 //autoDelete eğer consumer kapatırsa yanlışlıkla giderse queue kalsın istediğim için false veriyorum. kuyruk düşmesin istiyorum.
                 channel.QueueDeclare("hello-queue", true, false, false);
 
-                string message = "hello world";
+                //uygulama her çaıştırdığımda 50 mesaj gidecek.
 
-                var messageBody = Encoding.UTF8.GetBytes(message);
+                Enumerable.Range(0, 50).ToList().ForEach(x =>
+                {
+                    string message = $"Message = {x}";
+
+                    var messageBody = Encoding.UTF8.GetBytes(message);
 
 
-                channel.BasicPublish(string.Empty, "hello-queue", null, messageBody);
+                    channel.BasicPublish(string.Empty, "hello-queue", null, messageBody);
 
-                Console.WriteLine("Mesaj Gönderilmiştir.");
+                    Console.WriteLine($"Mesaj Gönderilmiştir : {message}");
+                    
+
+                });
+
                 Console.ReadLine();
 
 
