@@ -1,4 +1,5 @@
 ﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Text;
 
@@ -21,9 +22,19 @@ namespace RabbitMQ.Consumer
                 //mesajlar boşa gitmemesi için bir kuyruk oluşturulması gerekiyor. 4
                 //durable false olursa memory de tutulur ve rabbitmqya restart attığın için kaybolur. 5 (true)
                 //autoDelete eğer consumer kapatırsa yanlışlıkla giderse queue kalsın istediğim için false veriyorum. kuyruk düşmesin istiyorum.
-                channel.QueueDeclare("hello-queue", true, false, false);
+                //channel.QueueDeclare("hello-queue", true, false, false);
 
+                var consumer = new EventingBasicConsumer(channel);
 
+                channel.BasicConsume("hello-queue", true, consumer);
+
+                consumer.Received += (object sender, BasicDeliverEventArgs e) =>
+                {
+                    //mesajı alıyoruz şuan
+                    var message = Encoding.UTF8.GetString(e.Body.ToArray());
+
+                    Console.WriteLine("Gelen Mesaj : " + message);
+                };
 
 
                 Console.ReadLine();
@@ -31,5 +42,6 @@ namespace RabbitMQ.Consumer
 
             }
         }
+
     }
 }
