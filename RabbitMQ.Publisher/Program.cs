@@ -5,6 +5,15 @@ using System.Text;
 
 namespace RabbitMQ.Publisher
 {
+    public enum LogNames
+    {
+        Critical = 1,
+        Error = 2,
+        Warning = 3,
+        Information = 4,
+    }
+
+
     internal class Program
     {
         static void Main(string[] args)
@@ -22,19 +31,36 @@ namespace RabbitMQ.Publisher
                 //mesajlar boşa gitmemesi için bir kuyruk oluşturulması gerekiyor. 4
                 //durable false olursa memory de tutulur ve rabbitmqya restart attığın için kaybolur. 5 (true)
                 //autoDelete eğer consumer kapatırsa yanlışlıkla giderse queue kalsın istediğim için false veriyorum. kuyruk düşmesin istiyorum.
-                channel.QueueDeclare("hello-queue", true, false, false);
+                //channel.QueueDeclare("hello-queue", true, false, false);
+
+                //Fanout
+                //channel.ExchangeDeclare("logs-fanout", durable: true, type: ExchangeType.Fanout);
+
+                //Direct
+                channel.ExchangeDeclare("logs-direct", durable: true, type: ExchangeType.Direct);
+
+
+                Enum.GetNames(typeof(LogNames)).ToList().ForEach(x =>
+                {
+                    var routeKey = $"route-{x}";
+                    var queueName = $"direct-queue-{x}";
+                    channel.QueueDeclare(queueName, true, false, false);
+                    channel.QueueBind(queueName, "logs-direct", routeKey,null);
+                });
+
 
                 //uygulama her çaıştırdığımda 50 mesaj gidecek.
-
                 Enumerable.Range(0, 50).ToList().ForEach(x =>
                 {
-                    string message = $"Message = {x}";
+                    LogNames log = (LogNames)new Random().Next(1,5);
 
+
+                    string message = $"log-type :  {log}";
                     var messageBody = Encoding.UTF8.GetBytes(message);
 
+;                    var routeKey = $"route-{log}";
 
-                    channel.BasicPublish(string.Empty, "hello-queue", null, messageBody);
-
+                    channel.BasicPublish("logs-direct",routeKey, null, messageBody);
                     Console.WriteLine($"Mesaj Gönderilmiştir : {message}");
                     
 
